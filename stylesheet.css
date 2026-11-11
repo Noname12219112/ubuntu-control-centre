@@ -1,0 +1,12 @@
+.ucc-media-info { spacing: 12px; padding: 6px 2px; }
+.ucc-media-art { border-radius: 10px; }
+.ucc-media-details { spacing: 4px; }
+.ucc-media-title { font-weight: 700; }
+.ucc-media-artist { color: #a1a1aa; font-size: 0.9em; }
+.ucc-media-controls { spacing: 22px; padding: 6px; }
+.ucc-media-button {
+  min-width: 38px; min-height: 38px;
+  border-radius: 19px;
+  background-color: rgba(119, 41, 83, 0.14);
+}
+.ucc-media-button:hover { background-color: rgba(119, 41, 83, 0.28); }

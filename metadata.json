@@ -1,0 +1,12 @@
+{
+  "uuid": "quick-sound-switcher@dustin-hawkins",
+  "name": "Ubuntu Control Centre",
+  "description": "Unified Ubuntu-styled Quick Settings for media playback, audio devices, microphone input, profiles and application volume.",
+  "shell-version": [
+    "50"
+  ],
+  "settings-schema": "org.gnome.shell.extensions.quick-sound-switcher",
+  "gettext-domain": "quick-sound-switcher",
+  "url": "https://github.com/dustin-hawkins/quick-sound-switcher",
+  "version": 2
+}
