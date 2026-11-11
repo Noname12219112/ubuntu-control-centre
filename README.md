@@ -1,169 +1,50 @@
-# Quick Sound Switcher
 
-GNOME Shell extension that adds audio device selection to the Quick Settings panel. Switch output/input devices, change audio profiles, and control per-application volume — all from the system menu.
+# Ubuntu Control Centre
 
-Based on [Sound Input & Output Device Chooser](https://github.com/kgshank/gse-sound-output-device-chooser) by Gopi Sankar Karmegam, rewritten from scratch for GNOME 45-50 using modern ESM modules and the QuickSettings API.
-
-Now installable via the [Gnome Extensions website.](https://extensions.gnome.org/extension/9788/quick-sound-switcher/)
-
-## Screenshots
-
-| Output Devices | Input Devices |
-|:---:|:---:|
-| ![Output device chooser](output.png) | ![Input device chooser](input.png) |
+A unified, Ubuntu-styled audio and media control centre for GNOME Shell.
 
 ## Features
 
-- **Output Device Chooser** — Quick Settings toggle menu listing all output devices (speakers, HDMI, Bluetooth, etc.)
-- **Input Device Chooser** — Quick Settings toggle menu listing all input devices (microphones)
-- **Audio Profile Switching** — Change device profiles (e.g., A2DP vs HSP/HFP for Bluetooth headsets)
-- **Per-App Volume Mixer** — Control volume per application and route app audio to different outputs
-- **Keyboard Shortcuts** — Cycle through devices with configurable hotkeys
-- **Port Visibility** — Hide or always-show specific audio ports
-- **Configurable Icons** — Monochrome, colored, or no icons
+- Media playback controls
+- Audio output and input switching
+- Microphone controls
+- Audio profile switching
+- Per-application volume mixer
+- Integrated GNOME Quick Settings interface
 
 ## Requirements
 
-- GNOME Shell 45, 46, 47, 48, 49, or 50
-- PulseAudio or PipeWire (with PulseAudio compatibility)
-- Python 3 (optional, for improved port profile detection)
+- Ubuntu with GNOME Shell 50
+- PipeWire or PulseAudio
 
 ## Installation
 
-### From Source
-
 ```bash
-git clone https://github.com/dustin-hawkins/quick-sound-switcher.git
-cd quick-sound-switcher
-mkdir -p ~/.local/share/gnome-shell/extensions/quick-sound-switcher@dustin-hawkins
-cp -r * ~/.local/share/gnome-shell/extensions/quick-sound-switcher@dustin-hawkins/
-glib-compile-schemas ~/.local/share/gnome-shell/extensions/quick-sound-switcher@dustin-hawkins/schemas/
-```
+git clone https://github.com/Noname12219112/ubuntu-control-centre.git
+cd ubuntu-control-centre
 
-Then restart GNOME Shell (log out/in on Wayland, or `Alt+F2` → `r` on X11) and enable:
+EXT="$HOME/.local/share/gnome-shell/extensions/quick-sound-switcher@dustin-hawkins"
 
-```bash
+mkdir -p "$EXT"
+git archive HEAD | tar -x -C "$EXT"
+glib-compile-schemas "$EXT/schemas/"
+
 gnome-extensions enable quick-sound-switcher@dustin-hawkins
 ```
 
-### From Zip Bundle
+Log out and back in if GNOME Shell needs to reload.
 
-```bash
-gnome-extensions install quick-sound-switcher@dustin-hawkins.shell-extension.zip
-```
+## Usage
 
-## Building a Release Bundle
+Open GNOME Quick Settings from the top panel to access Ubuntu Control Centre and manage your audio devices, microphone, media and application volumes.
 
-To produce the `quick-sound-switcher@dustin-hawkins.shell-extension.zip` bundle for upload to [extensions.gnome.org](https://extensions.gnome.org/upload/), run:
+## Project Info
 
-```bash
-./build.sh
-```
+- **Version:** 2
+- **Platform:** GNOME Shell 50
+- **License:** GPL-3.0-or-later
 
-The script:
+---
 
-1. Compiles the GSettings schemas (`schemas/*.gschema.xml`).
-2. Strips `__pycache__` from `utils/` so transient artifacts don't ship.
-3. Calls `gnome-extensions pack` with all extra sources the extension needs (extra JS modules, `utils/`, `icons/`) and `--podir=po` so translations are compiled into `.mo` files under the `quick-sound-switcher` gettext domain inside the bundle. Raw `.po` sources are never shipped.
+**Ubuntu Control Centre — All your audio controls in one place.**
 
-Required tools: `gnome-extensions` (from `gnome-shell`), `glib-compile-schemas` (from `glib2`), and `gettext` (for `msgfmt`, used by `gnome-extensions pack` when compiling translations).
-
-If you prefer to invoke `gnome-extensions pack` manually, the equivalent command is:
-
-```bash
-glib-compile-schemas schemas/
-gnome-extensions pack \
-    --force \
-    --extra-source=deviceChooserBase.js \
-    --extra-source=outputDeviceChooser.js \
-    --extra-source=inputDeviceChooser.js \
-    --extra-source=appMixer.js \
-    --extra-source=portSettings.js \
-    --extra-source=signalManager.js \
-    --extra-source=utils/ \
-    --extra-source=icons/ \
-    --podir=po \
-    --out-dir=.
-```
-
-The output filename embeds the current version, derived from `git describe --tags --always --dirty`:
-
-- On a clean tagged commit (e.g. `v1.0.1`): `quick-sound-switcher@dustin-hawkins-v1.0.1.shell-extension.zip`
-- Past the latest tag: `...-v1.0.1-3-gabc1234.shell-extension.zip`
-- Working tree has uncommitted changes: suffix `-dirty`
-
-To validate the produced bundle against [`shexli`](https://pypi.org/project/shexli/) (GNOME Shell extension static analysis), run:
-
-```bash
-./test.sh
-```
-
-After the bundle is built, upload it at <https://extensions.gnome.org/upload/>.
-
-## Cutting a Release
-
-Releases are tagged with semantic versions (e.g. `v1.0.1`) and published as
-GitHub releases with the bundle attached. The `release.sh` script automates the
-full flow — finding the next version, tagging, building, validating, pushing,
-and creating the release with auto-generated notes:
-
-```bash
-./release.sh           # patch bump  (e.g. v1.0.0 -> v1.0.1)
-./release.sh minor     # minor bump  (e.g. v1.0.1 -> v1.1.0)
-./release.sh major     # major bump  (e.g. v1.1.0 -> v2.0.0)
-```
-
-The script refuses to run unless the working tree is clean, the current branch
-is `main`, and `main` is in sync with `origin/main`. It prompts before pushing
-the tag and creating the release. Requires `gh` to be authenticated
-(`gh auth login`).
-
-To replace the bundle on an existing release without recreating the tag:
-
-```bash
-gh release upload v1.0.1 \
-    quick-sound-switcher@dustin-hawkins-v1.0.1.shell-extension.zip --clobber
-```
-
-## Configuration
-
-Open preferences via:
-
-```bash
-gnome-extensions prefs quick-sound-switcher@dustin-hawkins
-```
-
-### Settings
-
-| Setting | Description | Default |
-|---------|-------------|---------|
-| Hide on Single Device | Hide chooser when only one device exists | Off |
-| Icon Theme | Monochrome, Colored, or None | Monochrome |
-| Show Audio Profiles | Display profile options per device | On |
-| Show Output/Input Chooser | Enable each device type selector | On |
-| Always Show Input Slider | Keep mic slider visible even when idle | On |
-| Block Hidden Device Activation | Prevent auto-switching to hidden devices | On |
-| Use Python for Profiles | More accurate profile detection via Python | On |
-
-### Keyboard Shortcuts
-
-| Action | Default Shortcut |
-|--------|-----------------|
-| Cycle Output Forward | `Super+Alt+Page Up` |
-| Cycle Output Backward | `Super+Alt+Page Down` |
-| Cycle Input Forward | `Super+Alt+Home` |
-| Cycle Input Backward | `Super+Alt+End` |
-
-Edit shortcuts via `dconf-editor` at `/org/gnome/shell/extensions/quick-sound-switcher/`.
-
-## Credits
-
-This project is a ground-up rewrite inspired by [Sound Input & Output Device Chooser](https://github.com/kgshank/gse-sound-output-device-chooser):
-
-- Original concept and logic by [Gopi Sankar Karmegam](https://github.com/kgshank)
-- Volume mixer based on work by [Brendan Early](https://github.com/mymindstorm/gnome-volume-mixer) and Burak Sener
-- Rewritten for GNOME 45-50 by [Dustin Hawkins](https://github.com/dustin-hawkins)
-
-## License
-
-GPL-3.0-or-later. See [license](license) for details.
